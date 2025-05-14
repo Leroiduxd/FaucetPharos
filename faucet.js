@@ -9,19 +9,17 @@ const port = process.env.PORT || 3000;
 const RPC_URL = 'https://testnet.dplabs-internal.com';
 const PRIVATE_KEY = 'e12f9b03327a875c2d5bf9b40a75cd2effeed46ea508ee595c6bc708c386da8c';
 
-const provider = new ethers.JsonRpcProvider(RPC_URL);
+const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
-// Anti-abus mémoire
 const sentAddresses = new Set();
 
 app.use(bodyParser.json());
 
-// === Endpoint faucet ===
 app.post('/send', async (req, res) => {
   const { address } = req.body;
 
-  if (!address || !ethers.isAddress(address)) {
+  if (!ethers.utils.isAddress(address)) {
     return res.status(400).json({ error: 'Adresse invalide' });
   }
 
@@ -30,29 +28,22 @@ app.post('/send', async (req, res) => {
   }
 
   try {
-    const gasPrice = ethers.parseUnits('1', 'gwei'); // RPC Pharos ne supporte pas EIP-1559
-
-    console.log("🔁 Envoi d'une TX legacy vers :", address);
-
     const tx = await wallet.sendTransaction({
       to: address,
-      value: ethers.parseUnits('0.001', 'ether'), // 0.001 PHRS
+      value: ethers.utils.parseUnits('0.001', 'ether'),
       gasLimit: 21000,
-      gasPrice,
-      type: 0 // 🧠 Forcer une transaction legacy
+      gasPrice: ethers.utils.parseUnits('1', 'gwei'),
     });
 
     console.log("✅ TX envoyée :", tx.hash);
-
     sentAddresses.add(address);
-    return res.json({ success: true, txHash: tx.hash });
+    res.json({ success: true, txHash: tx.hash });
   } catch (error) {
-    console.error('❌ Erreur interne :', error);
-    return res.status(500).json({ error: error.message || 'Erreur interne' });
+    console.error('❌ Erreur :', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// === Démarrage serveur ===
 app.listen(port, () => {
-  console.log(`🚀 FAROS Faucet actif sur le port ${port}`);
+  console.log(`🚀 Faucet FAROS actif sur le port ${port}`);
 });

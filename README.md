@@ -1,3 +1,1 @@
-# FAROS Faucet API
-
-POST `/send` avec `{ "address": "0x..." }` pour recevoir 0.001 FAROS (gwei) sur le testnet.
+# FAROS Faucet avec ethers.js v5\nCe projet permet de distribuer 0.001 PHRS natif via un endpoint POST /send.
