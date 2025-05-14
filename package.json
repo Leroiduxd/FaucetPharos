@@ -1,12 +1,13 @@
 {
-  "name": "simple-api-render",
+  "name": "faros-faucet-api",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "faucet.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node faucet.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "body-parser": "^1.20.2"
+    "body-parser": "^1.20.2",
+    "ethers": "^6.7.0",
+    "express": "^4.18.2"
   }
 }
