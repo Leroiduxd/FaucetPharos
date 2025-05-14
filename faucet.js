@@ -12,7 +12,7 @@ const PRIVATE_KEY = 'e12f9b03327a875c2d5bf9b40a75cd2effeed46ea508ee595c6bc708c38
 const provider = new ethers.JsonRpcProvider(RPC_URL);
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
-// Anti-spam simple (1 envoi max par adresse tant que l'app tourne)
+// Anti-abus mémoire
 const sentAddresses = new Set();
 
 app.use(bodyParser.json());
@@ -30,15 +30,16 @@ app.post('/send', async (req, res) => {
   }
 
   try {
-    const gasPrice = ethers.parseUnits('1', 'gwei'); // 🚫 empêche appel eth_maxPriorityFeePerGas
+    const gasPrice = ethers.parseUnits('1', 'gwei'); // RPC Pharos ne supporte pas EIP-1559
 
-    console.log("🔁 Envoi vers :", address);
+    console.log("🔁 Envoi d'une TX legacy vers :", address);
 
     const tx = await wallet.sendTransaction({
       to: address,
-      value: ethers.parseUnits('0.001', 'ether'), // 0.001 PHRS natif
+      value: ethers.parseUnits('0.001', 'ether'), // 0.001 PHRS
       gasLimit: 21000,
-      gasPrice
+      gasPrice,
+      type: 0 // 🧠 Forcer une transaction legacy
     });
 
     console.log("✅ TX envoyée :", tx.hash);
@@ -51,7 +52,7 @@ app.post('/send', async (req, res) => {
   }
 });
 
-// === Lancement du serveur ===
+// === Démarrage serveur ===
 app.listen(port, () => {
   console.log(`🚀 FAROS Faucet actif sur le port ${port}`);
 });
