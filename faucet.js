@@ -27,22 +27,17 @@ app.post('/send', async (req, res) => {
     return res.status(429).json({ error: 'Déjà reçu' });
   }
 
-  try {
-    const tx = await wallet.sendTransaction({
-      to: address,
-      value: ethers.parseUnits('0.001', 'ether'), // 0.001 PHRS natif
-      gasLimit: 21000
-    });
+ try {
+  const tx = await wallet.sendTransaction({
+    to: address,
+    value: ethers.parseUnits('0.001', 'ether'),
+    gasLimit: 21000,
+    gasPrice: ethers.parseUnits('1', 'gwei') // important pour RPC Pharos
+  });
 
-    sentAddresses.add(address);
-    return res.json({ success: true, txHash: tx.hash });
-  } catch (error) {
-    console.error('Erreur en envoyant :', error);
-    return res.status(500).json({ error: 'Erreur interne' });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`🚀 FAROS Faucet en ligne sur le port ${port}`);
-});
-
+  sentAddresses.add(address);
+  return res.json({ success: true, txHash: tx.hash });
+} catch (error) {
+  console.error('Erreur en envoyant :', error.message);
+  return res.status(500).json({ error: error.message });
+}
