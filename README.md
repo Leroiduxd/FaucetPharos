@@ -1,2 +1,2 @@
-# Simple API for Render/Railway
-This is a simple Node.js Express API ready to deploy on Render.com or Railway.app.
+# Simple API for Render
+This is a corrected CommonJS version ready for Render or Railway.
