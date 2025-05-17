@@ -1,1 +1,1 @@
-# FAROS Faucet avec ethers.js v5\nCe projet permet de distribuer 0.001 PHRS natif via un endpoint POST /send.
+# FAROS Faucet avec PHRS natif + 10000 USD token (ERC-20)
